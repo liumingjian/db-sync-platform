@@ -13,6 +13,7 @@ public enum HealthStatus {
     HEALTHY("Healthy", "System is operating normally"),
     DEGRADED("Degraded", "System is operating with minor issues"),
     UNHEALTHY("Unhealthy", "System has serious issues"),
+    PAUSED("Paused", "System is paused"),
     UNKNOWN("Unknown", "Health status cannot be determined");
 
     private final String displayName;

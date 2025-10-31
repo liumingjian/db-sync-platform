@@ -75,6 +75,18 @@ public final class JsonUtil {
     }
 
     /**
+     * Parse JSON string to JsonNode
+     */
+    public static com.fasterxml.jackson.databind.JsonNode parseJson(String json) {
+        try {
+            return OBJECT_MAPPER.readTree(json);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse JSON string", e);
+            throw new RuntimeException("Failed to parse JSON string", e);
+        }
+    }
+
+    /**
      * Get ObjectMapper instance
      */
     public static ObjectMapper getObjectMapper() {

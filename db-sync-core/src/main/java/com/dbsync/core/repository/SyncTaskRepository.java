@@ -1,5 +1,6 @@
 package com.dbsync.core.repository;
 
+import com.dbsync.common.enums.HealthStatus;
 import com.dbsync.common.enums.TaskStatus;
 import com.dbsync.core.domain.entity.SyncTask;
 import org.springframework.data.domain.Page;
@@ -37,9 +38,24 @@ public interface SyncTaskRepository extends JpaRepository<SyncTask, UUID> {
     List<SyncTask> findByStatusAndDeletedAtIsNull(TaskStatus status);
 
     /**
+     * Find by status (pageable)
+     */
+    Page<SyncTask> findByStatusAndDeletedAtIsNull(TaskStatus status, Pageable pageable);
+
+    /**
+     * Find by health status
+     */
+    List<SyncTask> findByHealthStatusAndDeletedAtIsNull(HealthStatus healthStatus);
+
+    /**
      * Find by task code
      */
     Optional<SyncTask> findByTenantIdAndTaskCodeAndDeletedAtIsNull(UUID tenantId, String taskCode);
+
+    /**
+     * Find by task code (including deleted)
+     */
+    Optional<SyncTask> findByTenantIdAndTaskCode(UUID tenantId, String taskCode);
 
     /**
      * Find by connector name

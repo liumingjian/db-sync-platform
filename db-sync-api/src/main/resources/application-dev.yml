@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dbsync_metadata
+    username: dbsync_user
+    password: dbsync_pass
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # 开发环境自动更新表结构
+    show-sql: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ""
+
+# Kafka Connect配置
+kafka:
+  connect:
+    url: http://localhost:8083
+
+logging:
+  level:
+    root: INFO
+    com.dbsync: DEBUG
+    org.springframework.security: DEBUG
