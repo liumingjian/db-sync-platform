@@ -365,16 +365,29 @@ db-sync-platform/
 │   ├── security/               # 安全配置
 │   └── DbSyncApplication.java  # 主启动类
 │
-├── deployment/                 # 部署配置
-│   ├── docker-compose/         # Docker Compose配置
-│   ├── kubernetes/             # Kubernetes YAML
-│   └── helm/                   # Helm Charts
+├── deploy/                     # 部署目录
+│   ├── config/                 # 配置文件
+│   │   └── prometheus.yml     # Prometheus配置
+│   ├── volumes/                # 数据卷（相对路径，不提交）
+│   │   ├── postgres/          # PostgreSQL数据
+│   │   ├── redis/             # Redis数据
+│   │   ├── zookeeper/         # Zookeeper数据
+│   │   ├── kafka/             # Kafka数据
+│   │   ├── prometheus/        # Prometheus数据
+│   │   └── grafana/           # Grafana数据
+│   └── README.md              # 部署说明
+│
+├── scripts/                    # 脚本目录
+│   └── database/               # 数据库脚本
+│       └── 01_init_database.sql
 │
 ├── docs/                       # 文档
 │   ├── 00-项目概述.md
 │   ├── 01-架构设计.md
 │   └── ...
 │
+├── docker-compose.yml          # Docker Compose配置
+├── verify.sh                   # 验证脚本
 └── pom.xml                     # Maven主配置
 ```
 

@@ -65,8 +65,8 @@ logs/
 application-local.yml
 application-dev-local.yml
 
-# Docker volumes
-docker-volumes/
+# Docker volumes (使用相对路径)
+deploy/volumes/
 
 # Kubernetes secrets
 k8s-secrets/

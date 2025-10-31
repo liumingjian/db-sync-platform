@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'db-sync-platform'
+    environment: 'dev'
+
+scrape_configs:
+  # Spring Boot API 监控
+  - job_name: 'db-sync-api'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8081']
+        labels:
+          application: 'db-sync-api'
+          environment: 'dev'
+
+  # Kafka Connect 监控
+  - job_name: 'kafka-connect'
+    static_configs:
+      - targets: ['kafka-connect:8083']
+        labels:
+          application: 'kafka-connect'
+
+  # Prometheus 自监控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
