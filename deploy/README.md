@@ -43,14 +43,17 @@ deploy/
 ### 清理所有数据
 
 ```bash
+# 进入部署目录
+cd deploy
+
 # 停止所有容器
 docker-compose down
 
 # 删除所有数据
-rm -rf deploy/volumes/*
+rm -rf volumes/*
 
 # 重新创建目录结构
-mkdir -p deploy/volumes/{postgres,redis,zookeeper/{data,logs},kafka,prometheus,grafana}
+mkdir -p volumes/{postgres,redis,zookeeper/{data,logs},kafka,prometheus,grafana}
 
 # 重新启动
 docker-compose up -d
@@ -59,11 +62,14 @@ docker-compose up -d
 ### 清理特定服务数据
 
 ```bash
+# 进入部署目录
+cd deploy
+
 # 停止容器
 docker-compose stop postgres
 
 # 删除 PostgreSQL 数据
-rm -rf deploy/volumes/postgres/*
+rm -rf volumes/postgres/*
 
 # 重启容器
 docker-compose start postgres
@@ -82,6 +88,7 @@ docker-compose start postgres
 修改配置后需要重启 Prometheus：
 
 ```bash
+cd deploy
 docker-compose restart prometheus
 ```
 
@@ -90,23 +97,33 @@ docker-compose restart prometheus
 ### 备份数据
 
 ```bash
-# 备份所有数据
+# 备份所有数据（从项目根目录执行）
 tar -czf db-sync-backup-$(date +%Y%m%d).tar.gz deploy/volumes/
 
+# 或者从 deploy 目录执行
+cd deploy
+tar -czf ../db-sync-backup-$(date +%Y%m%d).tar.gz volumes/
+
 # 备份 PostgreSQL 数据
-tar -czf postgres-backup-$(date +%Y%m%d).tar.gz deploy/volumes/postgres/
+cd deploy
+tar -czf ../postgres-backup-$(date +%Y%m%d).tar.gz volumes/postgres/
 ```
 
 ### 恢复数据
 
 ```bash
+# 进入部署目录
+cd deploy
+
 # 停止服务
 docker-compose down
 
-# 解压备份
+# 解压备份（假设备份文件在上级目录）
+cd ..
 tar -xzf db-sync-backup-20250130.tar.gz
 
 # 启动服务
+cd deploy
 docker-compose up -d
 ```
 
@@ -117,11 +134,14 @@ Docker 容器内的服务会以特定用户身份运行，可能会在 volumes �
 如果遇到权限问题，可以：
 
 ```bash
+# 进入部署目录
+cd deploy
+
 # 方式1: 修改目录权限（推荐）
-chmod -R 777 deploy/volumes/
+chmod -R 777 volumes/
 
 # 方式2: 修改所有者（需要 root 权限）
-sudo chown -R $(id -u):$(id -g) deploy/volumes/
+sudo chown -R $(id -u):$(id -g) volumes/
 ```
 
 ## 注意事项

@@ -73,7 +73,10 @@ cd db-sync-platform
 
 2. **启动基础设施**
 ```bash
-# 在项目根目录执行
+# 进入部署目录
+cd deploy
+
+# 启动所有服务
 docker-compose up -d
 ```
 
@@ -87,7 +90,7 @@ docker-compose up -d
 
 3. **验证基础设施状态**
 ```bash
-# 查看所有容器状态
+# 在 deploy 目录下执行
 docker-compose ps
 
 # 应该看到所有服务都是 healthy 或 running 状态
@@ -105,7 +108,10 @@ docker exec -it dbsync-postgres psql -U dbsync_user -d dbsync_metadata -c "\dt"
 
 5. **编译项目**
 ```bash
-# 在项目根目录执行
+# 返回项目根目录
+cd ..
+
+# 编译项目
 mvn clean install -DskipTests
 ```
 
@@ -141,6 +147,7 @@ curl http://localhost:8081/actuator/health
 
 #### 1. 验证Docker容器状态
 ```bash
+cd deploy
 docker-compose ps
 ```
 **预期结果**: 所有服务状态为 `Up` 或 `healthy`
@@ -220,7 +227,9 @@ echo "=========================================="
 
 # 1. Docker容器状态
 echo -e "\n[1/7] 检查Docker容器状态..."
+cd deploy
 docker-compose ps
+cd ..
 
 # 2. PostgreSQL
 echo -e "\n[2/7] 检查PostgreSQL数据库..."
@@ -336,6 +345,19 @@ curl -X POST http://localhost:8080/api/v1/tasks/{taskId}/start
 
 ```
 db-sync-platform/
+├── deploy/                      # 部署目录
+│   ├── docker-compose.yml       # Docker Compose配置
+│   ├── config/                  # 配置文件
+│   │   └── prometheus.yml       # Prometheus配置
+│   ├── volumes/                 # 数据卷（相对路径，不提交）
+│   │   ├── postgres/            # PostgreSQL数据
+│   │   ├── redis/               # Redis数据
+│   │   ├── zookeeper/           # Zookeeper数据
+│   │   ├── kafka/               # Kafka数据
+│   │   ├── prometheus/          # Prometheus数据
+│   │   └── grafana/             # Grafana数据
+│   └── README.md                # 部署说明
+│
 ├── db-sync-common/              # 公共模块
 │   ├── enums/                   # 枚举定义
 │   ├── constants/               # 常量
@@ -365,18 +387,6 @@ db-sync-platform/
 │   ├── security/               # 安全配置
 │   └── DbSyncApplication.java  # 主启动类
 │
-├── deploy/                     # 部署目录
-│   ├── config/                 # 配置文件
-│   │   └── prometheus.yml     # Prometheus配置
-│   ├── volumes/                # 数据卷（相对路径，不提交）
-│   │   ├── postgres/          # PostgreSQL数据
-│   │   ├── redis/             # Redis数据
-│   │   ├── zookeeper/         # Zookeeper数据
-│   │   ├── kafka/             # Kafka数据
-│   │   ├── prometheus/        # Prometheus数据
-│   │   └── grafana/           # Grafana数据
-│   └── README.md              # 部署说明
-│
 ├── scripts/                    # 脚本目录
 │   └── database/               # 数据库脚本
 │       └── 01_init_database.sql
@@ -386,7 +396,6 @@ db-sync-platform/
 │   ├── 01-架构设计.md
 │   └── ...
 │
-├── docker-compose.yml          # Docker Compose配置
 ├── verify.sh                   # 验证脚本
 └── pom.xml                     # Maven主配置
 ```
@@ -489,7 +498,7 @@ mvn clean test jacoco:report
 
 ### Docker部署
 ```bash
-cd deployment/docker-compose
+cd deploy
 docker-compose up -d
 ```
 
@@ -542,6 +551,9 @@ A: 利用Debezium的事务元数据功能，在目标端作为事务执行
 
 **解决方案**:
 ```bash
+# 进入部署目录
+cd deploy
+
 # 查看容器日志
 docker-compose logs [服务名]
 
@@ -561,6 +573,9 @@ docker-compose up -d
 
 **解决方案**:
 ```bash
+# 进入部署目录
+cd deploy
+
 # 查看Kafka Connect日志
 docker-compose logs kafka-connect
 
@@ -648,16 +663,20 @@ lsof -i :8081  # Actuator
 
 ```bash
 # 1. 停止并删除所有容器
+cd deploy
 docker-compose down -v
 
 # 2. 清理Maven构建
+cd ..
 mvn clean
 
 # 3. 删除日志文件
 rm -rf logs/
 
 # 4. 重新启动
+cd deploy
 docker-compose up -d
+cd ..
 mvn clean install -DskipTests
 cd db-sync-api && mvn spring-boot:run
 ```
